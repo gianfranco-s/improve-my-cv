@@ -1,8 +1,11 @@
+from improve_my_cv.llm_handler import LLMHandler
+
+
 class ImproveMyCV:
     def __init__(self, original_resume: str) -> None:
         pass
 
-    def improve_cv(self) -> str:
+    def improve_cv(self, prompt: str, llm_handler: LLMHandler) -> str:
         pass
 
     def _check_original_resume_is_json_like(self) -> None:
