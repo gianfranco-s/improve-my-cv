@@ -12,8 +12,8 @@ def load_json_resume(filepath: Path) -> dict:
 
 if __name__ == '__main__':
     resume_dir = Path(__file__).parents[1] / 'json_cv'
-    resume = load_json_resume(resume_dir / 'cv_python_dev.json')
+    resume = load_json_resume(resume_dir / 'example_cv.json')
     handler = HandleOllama()
     response = handler.generate(prompt='why is the sky blue?')
-    
+
     print(response)
