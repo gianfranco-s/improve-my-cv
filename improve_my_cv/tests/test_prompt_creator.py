@@ -7,9 +7,9 @@ def test_prompt_creator_create_prompt_with_valid_strings():
     json_resume = 'childhood memories'
 
     prompt_creator = PromptCreator(prompt_template=prompt_template,
-                           job_description=job_description,
-                           json_resume=json_resume)
-    
+                                   job_description=job_description,
+                                   json_resume=json_resume)
+
     full_prompt = prompt_creator.create_prompt()
 
     assert full_prompt == prompt_template.format(job_description=job_description, json_resume=json_resume)

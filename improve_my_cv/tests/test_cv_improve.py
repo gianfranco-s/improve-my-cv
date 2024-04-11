@@ -5,6 +5,7 @@ import pytest
 from improve_my_cv.cv_improve import ImproveMyCV, InvalidResponseException
 from improve_my_cv.llm_handler import LLMHandler
 
+
 class MockLLMHandler(LLMHandler):
     valid_input = '{"field1": "value1", "field2": "value2", "date_field" = "7", "user": "my-email"}'
 

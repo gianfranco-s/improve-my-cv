@@ -60,10 +60,10 @@ class HandleOllama(LLMHandler):
 
     def standardize_response(self) -> ModelResponse:
         return ModelResponse(
-            context = self.response.get('context'),
-            created_at = self.response.get('created_at'),
-            model = self.response.get('model'),
-            prompt_eval_duration_seconds = int(self.response.get('prompt_eval_duration')) / 1e9,
-            total_duration_seconds = int(self.response.get('total_duration')) / 1e9,
-            response_text = self.response.get('response'),
+            context=self.response.get('context'),
+            created_at=self.response.get('created_at'),
+            model=self.response.get('model'),
+            prompt_eval_duration_seconds=int(self.response.get('prompt_eval_duration')) / 1e9,
+            total_duration_seconds=int(self.response.get('total_duration')) / 1e9,
+            response_text=self.response.get('response'),
         )
