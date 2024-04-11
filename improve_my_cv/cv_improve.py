@@ -1,6 +1,9 @@
 from improve_my_cv.llm_handler import LLMHandler
 
 
+class InvalidResponseException(Exception):
+    pass
+
 class ImproveMyCV:
     def __init__(self, original_resume: str) -> None:
         pass
