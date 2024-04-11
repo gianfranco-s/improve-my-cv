@@ -6,7 +6,8 @@ from dataclasses import dataclass
 
 """We'll do it this way, to possibly check with a paid, non-local LLM"""
 
-
+class LLMHandlerException(Exception):
+    pass
 @dataclass
 class ModelResponse:
     context: list
@@ -59,6 +60,10 @@ class HandleOllama(LLMHandler):
         }
         response = requests.post(url=self.api_url, json=data)
         self.response = json.loads(response.text)
+
+        if 'error' in self.response:
+            raise LLMHandlerException(self.response)
+
         return self.response
 
     def standardize_response(self) -> ModelResponse:
