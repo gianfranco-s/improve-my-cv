@@ -10,6 +10,7 @@ class PromptCreator:
         Please update `json_resume`'s fields to better match the `job_description`.
 
         Each parameter will be delimited by the characters ```
+        Please only answer with an updated JSON
 
         job_description =
         ```
