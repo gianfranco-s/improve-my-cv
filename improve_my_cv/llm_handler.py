@@ -14,7 +14,7 @@ class ModelResponse:
     model: str
     prompt_eval_duration_seconds: float
     total_duration_seconds: float
-    response_text: str
+    text: str
 
 
 class LLMHandler(ABC):
@@ -28,7 +28,10 @@ class LLMHandler(ABC):
         pass
 
     @abstractmethod
-    def generate(self) -> str:
+    def generate(self,
+                 prompt: str,
+                 model: str,
+                 stream: bool = False) -> dict:
         """Generate content"""
         pass
 
@@ -47,7 +50,7 @@ class HandleOllama(LLMHandler):
 
     def generate(self,
                  prompt: str,
-                 model: str = 'llama2',
+                 model: str,
                  stream: bool = False) -> dict:
         data = {
             'model': model,
@@ -65,5 +68,5 @@ class HandleOllama(LLMHandler):
             model=self.response.get('model'),
             prompt_eval_duration_seconds=int(self.response.get('prompt_eval_duration')) / 1e9,
             total_duration_seconds=int(self.response.get('total_duration')) / 1e9,
-            response_text=self.response.get('response'),
+            text=self.response.get('response'),
         )
