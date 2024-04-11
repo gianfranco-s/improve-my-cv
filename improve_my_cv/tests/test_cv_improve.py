@@ -49,17 +49,17 @@ def test_improve_my_cv_exception_for_changed_field_names(valid_resume: str) -> N
         improve.improve_cv(llm_handler=llm_handler)
 
 
-# def test_improve_my_cv_exception_for_changed_dates() -> None:
-#     original_resume = r'{"field1": "value1", "field2": "value"}'
-#     improve = ImproveMyCV(original_resume=original_resume)
-
-#     with pytest.raises(InvalidResponseException):
-#         improve.improve_cv(llm_handler=MockLLMHandler(test_action='changed_dates'))
+def test_improve_my_cv_exception_for_changed_dates(valid_resume: str) -> None:
+    job_description = 'test_jd'
+    improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
+    llm_handler = MockLLMHandler(valid_input=valid_resume, test_action='changed_dates')
+    with pytest.raises(InvalidResponseException):
+        improve.improve_cv(llm_handler=llm_handler)
 
 
 # def test_improve_my_cv_exception_for_changed_user_data() -> None:
-#     original_resume = r'{"field1": "value1", "field2": "value"}'
-#     improve = ImproveMyCV(original_resume=original_resume)
-
+#     job_description = 'test_jd'
+#     improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
+#     llm_handler = MockLLMHandler(valid_input=valid_resume, test_action='changed_user_data')
 #     with pytest.raises(InvalidResponseException):
-#         improve.improve_cv(llm_handler=MockLLMHandler(test_action='changed_user_data'))
+#         improve.improve_cv(llm_handler=llm_handler)

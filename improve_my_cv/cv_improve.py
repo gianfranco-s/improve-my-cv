@@ -21,10 +21,9 @@ class ImproveMyCV:
         model_response = llm_handler.standardize_response()
 
         self.improved_resume = model_response.text
-        print(self.improved_resume)
-        print(type(self.improved_resume))
         self._check_improved_resume_is_dict()
         self._check_unchanged_field_names()
+        self._check_unchanged_dates()
 
         self.improved_text_resume = json.dumps(self.improved_resume)
 
@@ -41,9 +40,17 @@ class ImproveMyCV:
         if original_field_names != new_field_names:
             raise InvalidResponseException('Some field names have been changed in the response')
 
-
     def _check_unchanged_dates(self) -> None:
-        pass
+        date_fields_changed = []
+        
+        for key in self.original_resume:
+            if 'date' in key.lower() and key in self.improved_resume:
+                if self.original_resume[key] != self.improved_resume[key]:
+                    date_fields_changed.append(key)
+
+        if len(date_fields_changed) > 0:
+            raise InvalidResponseException('Some dates have been changed on the resume')
+
 
     def _check_unchanged_user_data(self) -> None:
         pass
