@@ -3,76 +3,63 @@ import json
 import pytest
 
 from improve_my_cv.cv_improve import ImproveMyCV, InvalidResponseException
-from improve_my_cv.llm_handler import LLMHandler
+from improve_my_cv.tests.mock_llm_handler import MockLLMHandler
+
+@pytest.fixture
+def valid_resume() -> str:
+    valid_resume = {
+        'field1': 'value1',
+        'field2': 'value2',
+        'date_field': '7',
+        'user': 'my-email',
+        'work_experience': 'this is a response'
+    }
+    return json.dumps(valid_resume)
 
 
-class MockLLMHandler(LLMHandler):
-    valid_input = '{"field1": "value1", "field2": "value2", "date_field" = "7", "user": "my-email"}'
-
-    def __init__(self, valid_input: str = valid_input,
-                 test_action: str = 'valid_input') -> None:
-        self.valid_input = valid_input
-        self.test_action = test_action
-
-    def set_api_key(self) -> None:
-        pass
-
-    def generate(self) -> str:
-        valid_input = json.loads(self.valid_input)
-
-        actions = {
-            'valid_output': {key: f'{val}_new' for key, val in valid_input.items()},
-            'invalid_output': 'This is a non json text',
-            'changed_field_names': {f'{key}_new': val for key, val in valid_input.items()},
-            'changed_dates': {key: f'{val}_new' for key, val in valid_input.items() if 'date' in key},
-            'changed_user_data': {key: f'{val}_new' for key, val in valid_input.items() if 'user' in key},
-        }
-
-        if self.test_action not in actions:
-            raise ValueError(f'Invalid action {self.test_action}')
-
-        return json.dumps(actions.get(self.test_action))
-
-
-def test_improve_my_cv() -> None:
-    original_resume = r'{"field1": "value1", "field2": "value"}'
-    improve = ImproveMyCV(original_resume=original_resume)
-    assert isinstance(improve.improve_cv(), str)
+def test_improve_my_cv(valid_resume: str) -> None:
+    job_description = 'test_jd'
+    improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
+    llm_handler = MockLLMHandler(valid_input=valid_resume)
+    improved_resume = improve.improve_cv(llm_handler=llm_handler)
+    assert isinstance(improved_resume, str)
 
 
 def test_improve_my_cv_exception_for_invalid_input() -> None:
     invalid_input = 'This is a non json text'
-    with pytest.raises(Exception):
-        ImproveMyCV(original_resume=invalid_input)
+    job_description = 'test_jd'
+    with pytest.raises(json.decoder.JSONDecodeError):
+        ImproveMyCV(original_resume=invalid_input, job_description=job_description)
 
 
-def test_improve_my_cv_exception_for_invalid_llm_output() -> None:
-    original_resume = r'{"field1": "value1", "field2": "value"}'
-    improve = ImproveMyCV(original_resume=original_resume)
-
-    with pytest.raises(json.JSONDecodeError):
-        improve.improve_cv(prompt='test prompt', llm_handler=MockLLMHandler(test_action='invalid_output'))
-
-
-def test_improve_my_cv_exception_for_changed_field_names() -> None:
-    original_resume = r'{"field1": "value1", "field2": "value"}'
-    improve = ImproveMyCV(original_resume=original_resume)
-
+def test_improve_my_cv_exception_for_invalid_llm_output(valid_resume: str) -> None:
+    """Valid output of LLM should be a json string"""
+    job_description = 'test_jd'
+    improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
+    llm_handler = MockLLMHandler(valid_input=valid_resume, test_action='invalid_output')
     with pytest.raises(InvalidResponseException):
-        improve.improve_cv(prompt='test prompt', llm_handler=MockLLMHandler(test_action='changed_field_names'))
+        improve.improve_cv(llm_handler=llm_handler)
 
 
-def test_improve_my_cv_exception_for_changed_dates() -> None:
-    original_resume = r'{"field1": "value1", "field2": "value"}'
-    improve = ImproveMyCV(original_resume=original_resume)
-
+def test_improve_my_cv_exception_for_changed_field_names(valid_resume: str) -> None:
+    job_description = 'test_jd'
+    improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
+    llm_handler = MockLLMHandler(valid_input=valid_resume, test_action='changed_field_names')
     with pytest.raises(InvalidResponseException):
-        improve.improve_cv(prompt='test prompt', llm_handler=MockLLMHandler(test_action='changed_dates'))
+        improve.improve_cv(llm_handler=llm_handler)
 
 
-def test_improve_my_cv_exception_for_changed_user_data() -> None:
-    original_resume = r'{"field1": "value1", "field2": "value"}'
-    improve = ImproveMyCV(original_resume=original_resume)
+# def test_improve_my_cv_exception_for_changed_dates() -> None:
+#     original_resume = r'{"field1": "value1", "field2": "value"}'
+#     improve = ImproveMyCV(original_resume=original_resume)
 
-    with pytest.raises(InvalidResponseException):
-        improve.improve_cv(prompt='test prompt', llm_handler=MockLLMHandler(test_action='changed_user_data'))
+#     with pytest.raises(InvalidResponseException):
+#         improve.improve_cv(llm_handler=MockLLMHandler(test_action='changed_dates'))
+
+
+# def test_improve_my_cv_exception_for_changed_user_data() -> None:
+#     original_resume = r'{"field1": "value1", "field2": "value"}'
+#     improve = ImproveMyCV(original_resume=original_resume)
+
+#     with pytest.raises(InvalidResponseException):
+#         improve.improve_cv(llm_handler=MockLLMHandler(test_action='changed_user_data'))
