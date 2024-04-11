@@ -11,7 +11,7 @@ def valid_resume() -> str:
         'field1': 'value1',
         'field2': 'value2',
         'date_field': '7',
-        'user': 'my-email',
+        'name': 'username',
         'work_experience': 'this is a response'
     }
     return json.dumps(valid_resume)
@@ -57,9 +57,9 @@ def test_improve_my_cv_exception_for_changed_dates(valid_resume: str) -> None:
         improve.improve_cv(llm_handler=llm_handler)
 
 
-# def test_improve_my_cv_exception_for_changed_user_data() -> None:
-#     job_description = 'test_jd'
-#     improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
-#     llm_handler = MockLLMHandler(valid_input=valid_resume, test_action='changed_user_data')
-#     with pytest.raises(InvalidResponseException):
-#         improve.improve_cv(llm_handler=llm_handler)
+def test_improve_my_cv_exception_for_changed_user_data(valid_resume: str) -> None:
+    job_description = 'test_jd'
+    improve = ImproveMyCV(original_resume=valid_resume, job_description=job_description)
+    llm_handler = MockLLMHandler(valid_input=valid_resume, test_action='changed_user_data')
+    with pytest.raises(InvalidResponseException):
+        improve.improve_cv(llm_handler=llm_handler)

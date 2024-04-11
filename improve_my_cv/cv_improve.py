@@ -24,6 +24,7 @@ class ImproveMyCV:
         self._check_improved_resume_is_dict()
         self._check_unchanged_field_names()
         self._check_unchanged_dates()
+        self._check_unchanged_user_data()
 
         self.improved_text_resume = json.dumps(self.improved_resume)
 
@@ -51,6 +52,16 @@ class ImproveMyCV:
         if len(date_fields_changed) > 0:
             raise InvalidResponseException('Some dates have been changed on the resume')
 
-
     def _check_unchanged_user_data(self) -> None:
-        pass
+        user_fields = {'name', 'email', 'phone', 'url', 'location', 'username'}
+
+        user_fields_changed = []
+
+        # TODO: apply this to deeply nested keys, as in urls within profiles
+        for field in user_fields:
+            if field in self.original_resume and field in self.improved_resume:
+                if self.original_resume[field] != self.improved_resume[field]:
+                    user_fields_changed.append(field)
+
+        if len(user_fields_changed) > 0:
+            raise InvalidResponseException('Some user data has been changed')

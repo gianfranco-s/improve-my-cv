@@ -44,14 +44,14 @@ class MockLLMHandler(LLMHandler):
 
 
 def test_action(action: str, valid_input: str):
-    input = json.loads(valid_input)
+    input_dict = json.loads(valid_input)
 
     output = {
-        'valid_output': {key: f'{val}_new' if 'date' not in key.lower() else val for key, val in input.items()},
+        'valid_output': {key: f'{val}_new' if 'date' not in key.lower() and 'name' not in key.lower() else val for key, val in input_dict.items()},
         'invalid_output': 'This is a non json text',
-        'changed_field_names': {f'{key}_new': val for key, val in input.items()},
-        'changed_dates': {key: f'{val}_new' if 'date' in key.lower() else val for key, val in input.items()},
-        'changed_user_data': {key: f'{val}_new' for key, val in input.items() if 'user' in key},
+        'changed_field_names': {f'{key}_new': val for key, val in input_dict.items()},
+        'changed_dates': {key: f'{val}_new' if 'date' in key.lower() else val for key, val in input_dict.items()},
+        'changed_user_data': {key: f'{val}_new' if 'name' in key.lower() else val for key, val in input_dict.items()},
     }
 
     if action not in output.keys():
