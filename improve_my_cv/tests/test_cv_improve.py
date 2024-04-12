@@ -5,6 +5,7 @@ import pytest
 from improve_my_cv.cv_improve import ImproveMyCV, InvalidResponseException
 from improve_my_cv.tests.mock_llm_handler import MockLLMHandler
 
+
 @pytest.fixture
 def valid_resume() -> str:
     valid_resume = {

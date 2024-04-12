@@ -5,7 +5,7 @@ from improve_my_cv.llm_handler import LLMHandler, ModelResponse
 
 class MockLLMHandler(LLMHandler):
 
-    def __init__(self, 
+    def __init__(self,
                  valid_input: str,
                  test_action: str = 'valid_output') -> None:
         self.valid_input_resume = valid_input
@@ -19,7 +19,7 @@ class MockLLMHandler(LLMHandler):
         """It's expected that the model will return a `model_generated_response`
         The fields of this dictionary depend on the specific LLM used
         """
-        
+
         model_generated_response = {
             'context': None,
             'created_at': None,
@@ -56,5 +56,5 @@ def test_action(action: str, valid_input: str):
 
     if action not in output.keys():
         raise ValueError(f'Invalid test action {action}')
-    
+
     return output.get(action)

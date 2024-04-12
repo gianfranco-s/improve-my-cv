@@ -6,8 +6,11 @@ from dataclasses import dataclass
 
 """We'll do it this way, to possibly check with a paid, non-local LLM"""
 
+
 class LLMHandlerException(Exception):
     pass
+
+
 @dataclass
 class ModelResponse:
     context: list

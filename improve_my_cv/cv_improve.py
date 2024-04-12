@@ -5,6 +5,8 @@ from improve_my_cv.prompt_creator import PromptCreator
 
 DEFAULT_MODEL = 'llama2'
 DEFAULT_LLMHANDLER = HandleOllama()
+
+
 class InvalidResponseException(Exception):
     pass
 
@@ -32,7 +34,7 @@ class ImproveMyCV:
 
     def _check_improved_resume_is_dict(self) -> None:
         if not isinstance(self.improved_resume, dict):
-            raise InvalidResponseException('LLM returned non-JSON response')
+            raise InvalidResponseException(f'LLM returned non-JSON response: \n {self.improved_resume}')
 
     def _check_unchanged_field_names(self) -> None:
         original_field_names = set(self.original_resume.keys())
@@ -43,7 +45,7 @@ class ImproveMyCV:
 
     def _check_unchanged_dates(self) -> None:
         date_fields_changed = []
-        
+
         for key in self.original_resume:
             if 'date' in key.lower() and key in self.improved_resume:
                 if self.original_resume[key] != self.improved_resume[key]:
