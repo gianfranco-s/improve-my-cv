@@ -35,7 +35,8 @@ class LLMHandler(ABC):
     def generate(self,
                  prompt: str,
                  model: str,
-                 stream: bool = False) -> dict:
+                 stream: bool = False,
+                 format: str = 'json') -> dict:
         """Generate content"""
         pass
 
@@ -55,11 +56,13 @@ class HandleOllama(LLMHandler):
     def generate(self,
                  prompt: str,
                  model: str,
-                 stream: bool = False) -> dict:
+                 stream: bool = False,
+                 format: str = 'json') -> dict:
         data = {
             'model': model,
             'prompt': prompt,
             'stream': stream,
+            'format': format,
         }
         response = requests.post(url=self.api_url, json=data)
         self.response = json.loads(response.text)
