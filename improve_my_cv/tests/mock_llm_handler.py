@@ -6,9 +6,9 @@ from improve_my_cv.llm_handler import LLMHandler, ModelResponse
 class MockLLMHandler(LLMHandler):
 
     def __init__(self,
-                 valid_input: str,
+                 valid_input_resume: dict,
                  test_action: str = 'valid_output') -> None:
-        self.valid_input_resume = valid_input
+        self.valid_input_resume = valid_input_resume
         self.test_action = test_action
         self.response = None
 
@@ -43,18 +43,17 @@ class MockLLMHandler(LLMHandler):
         )
 
 
-def test_action(action: str, valid_input: str):
-    input_dict = json.loads(valid_input)
+def test_action(action: str, valid_input: dict) -> str:
 
     output = {
-        'valid_output': {key: f'{val}_new' if 'date' not in key.lower() and 'name' not in key.lower() else val for key, val in input_dict.items()},
+        'valid_output': {key: f'{val}_new' if 'date' not in key.lower() and 'name' not in key.lower() else val for key, val in valid_input.items()},
         'invalid_output': 'This is a non json text',
-        'changed_field_names': {f'{key}_new': val for key, val in input_dict.items()},
-        'changed_dates': {key: f'{val}_new' if 'date' in key.lower() else val for key, val in input_dict.items()},
-        'changed_user_data': {key: f'{val}_new' if 'name' in key.lower() else val for key, val in input_dict.items()},
+        'changed_field_names': {f'{key}_new': val for key, val in valid_input.items()},
+        'changed_dates': {key: f'{val}_new' if 'date' in key.lower() else val for key, val in valid_input.items()},
+        'changed_user_data': {key: f'{val}_new' if 'name' in key.lower() else val for key, val in valid_input.items()},
     }
 
     if action not in output.keys():
         raise ValueError(f'Invalid test action {action}')
 
-    return output.get(action)
+    return json.dumps(output.get(action))

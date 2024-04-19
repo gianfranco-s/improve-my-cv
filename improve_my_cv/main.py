@@ -6,9 +6,9 @@ from improve_my_cv import resume_dir
 from improve_my_cv.cv_improve import ImproveMyCV
 
 
-def load_json_resume(filepath: Path) -> str:
+def load_json_resume(filepath: Path) -> dict:
     with open(filepath, 'r') as f:
-        return json.dumps(json.load(f))
+        return json.load(f)
 
 
 if __name__ == '__main__':

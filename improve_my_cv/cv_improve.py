@@ -11,37 +11,41 @@ class InvalidResponseException(Exception):
     pass
 
 
-class ImproveMyCV:
-    def __init__(self, original_resume: str, job_description: str) -> None:
-        self.original_resume = json.loads(original_resume)
-        self.prompt = PromptCreator(json_resume=self.original_resume, job_description=job_description).create_prompt()
-        self.improved_resume: dict = None
-        self.improved_text_resume: str = None
+class InvalidResumeInputException(Exception):
+    pass
 
-    def improve_cv(self, model: str = DEFAULT_MODEL, llm_handler: LLMHandler = DEFAULT_LLMHANDLER) -> str:
+
+class ImproveMyCV:
+    """Receives a dictionary of the original resume and, based on the JD, returns an improved resume."""
+    def __init__(self, original_resume: dict, job_description: str) -> None:
+        if not isinstance(original_resume, dict):
+            raise InvalidResumeInputException('Resume must be dict')
+
+        self.original_resume = original_resume
+        self.prompt = PromptCreator(json_resume=json.dumps(self.original_resume), job_description=job_description).create_prompt()
+        self.improved_resume: dict = None
+
+    def improve_cv(self, model: str = DEFAULT_MODEL, llm_handler: LLMHandler = DEFAULT_LLMHANDLER, perform_checks: bool = True) -> dict:
         llm_handler.generate(prompt=self.prompt, model=model)
         model_response = llm_handler.standardize_response()
 
-        self.improved_resume = model_response.text
-        self._check_improved_resume_is_dict()
-        self._check_unchanged_field_names()
-        self._check_unchanged_dates()
-        self._check_unchanged_user_data()
+        self.improved_resume = json.loads(model_response.text)
 
-        self.improved_text_resume = json.dumps(self.improved_resume)
+        if perform_checks:
+            self.perform_response_checks()
 
-        return self.improved_text_resume
+        return self.improved_resume
 
     def _check_improved_resume_is_dict(self) -> None:
         if not isinstance(self.improved_resume, dict):
-            raise InvalidResponseException(f'LLM returned non-JSON response: \n {self.improved_resume}')
+            raise InvalidResponseException(f'LLM returned non-JSON response:\n{self.improved_resume}')
 
     def _check_unchanged_field_names(self) -> None:
         original_field_names = set(self.original_resume.keys())
         new_field_names = set(self.improved_resume.keys())
 
         if original_field_names != new_field_names:
-            raise InvalidResponseException('Some field names have been changed in the response')
+            raise InvalidResponseException('Some field names have been changed in the response:\n{self.improved_resume}')
 
     def _check_unchanged_dates(self) -> None:
         date_fields_changed = []
@@ -52,7 +56,7 @@ class ImproveMyCV:
                     date_fields_changed.append(key)
 
         if len(date_fields_changed) > 0:
-            raise InvalidResponseException('Some dates have been changed on the resume')
+            raise InvalidResponseException('Some dates have been changed on the resume:\n{self.improved_resume}')
 
     def _check_unchanged_user_data(self) -> None:
         user_fields = {'name', 'email', 'phone', 'url', 'location', 'username'}
@@ -67,3 +71,9 @@ class ImproveMyCV:
 
         if len(user_fields_changed) > 0:
             raise InvalidResponseException('Some user data has been changed')
+
+    def perform_response_checks(self) -> dict:
+        self._check_improved_resume_is_dict()
+        self._check_unchanged_field_names()
+        self._check_unchanged_dates()
+        self._check_unchanged_user_data()
