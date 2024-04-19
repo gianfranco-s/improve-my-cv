@@ -40,25 +40,29 @@ def test_improve_my_cv_exception_for_invalid_llm_output(valid_resume: dict, test
     improve = ImproveMyCV(original_resume=valid_resume, job_description=test_job_description)
     llm_handler = MockLLMHandler(valid_input_resume=valid_resume, test_action='invalid_output')
     with pytest.raises(InvalidResponseException):
-        improve.improve_cv(llm_handler=llm_handler, perform_checks=True)
+        improve.improve_cv(llm_handler=llm_handler)
 
 
-def test_improve_my_cv_exception_for_changed_field_names(valid_resume: dict, test_job_description: str) -> None:
+def test_improve_my_cv_warning_for_changed_field_names(valid_resume: dict, test_job_description: str) -> None:
     improve = ImproveMyCV(original_resume=valid_resume, job_description=test_job_description)
     llm_handler = MockLLMHandler(valid_input_resume=valid_resume, test_action='changed_field_names')
-    with pytest.raises(InvalidResponseException):
-        improve.improve_cv(llm_handler=llm_handler, perform_checks=True)
+    improve.improve_cv(llm_handler=llm_handler)
+    new_field_names = improve.response_warnings().get('field_names_changed') - set(valid_resume.keys())
+    assert all([field.endswith('_new') for field in new_field_names])
 
 
-def test_improve_my_cv_exception_for_changed_dates(valid_resume: dict, test_job_description: str) -> None:
+def test_improve_my_cv_warning_for_changed_dates(valid_resume: dict, test_job_description: str) -> None:
     improve = ImproveMyCV(original_resume=valid_resume, job_description=test_job_description)
     llm_handler = MockLLMHandler(valid_input_resume=valid_resume, test_action='changed_dates')
-    with pytest.raises(InvalidResponseException):
-        improve.improve_cv(llm_handler=llm_handler, perform_checks=True)
+    improve.improve_cv(llm_handler=llm_handler)
+    dates_changed = improve.response_warnings().get('dates_changed').get('date_field')
+    org_date, new_date = dates_changed.split(' -> ')
+    assert org_date == valid_resume.get('date_field')
+    assert new_date == valid_resume.get('date_field') + '_new'
 
 
-def test_improve_my_cv_exception_for_changed_user_data(valid_resume: dict, test_job_description: str) -> None:
+def test_improve_my_cv_warning_for_changed_user_data(valid_resume: dict, test_job_description: str) -> None:
     improve = ImproveMyCV(original_resume=valid_resume, job_description=test_job_description)
     llm_handler = MockLLMHandler(valid_input_resume=valid_resume, test_action='changed_user_data')
-    with pytest.raises(InvalidResponseException):
-        improve.improve_cv(llm_handler=llm_handler, perform_checks=True)
+    improve.improve_cv(llm_handler=llm_handler)
+    assert improve.response_warnings().get('is_user_data_changed') is True
