@@ -1,5 +1,7 @@
 import json
 
+from typing import List
+
 from improve_my_cv.llm_handler import LLMHandler, HandleOllama
 from improve_my_cv.prompt_creator import PromptCreator
 
@@ -29,36 +31,50 @@ class ImproveMyCV:
         llm_handler.generate(prompt=self.prompt, model=model)
         model_response = llm_handler.standardize_response()
 
-        self.improved_resume = json.loads(model_response.text)
+        try:
+            self.improved_resume = json.loads(model_response.text)
+            return self.improved_resume
 
-        if perform_checks:
-            self.perform_response_checks()
+        except json.decoder.JSONDecodeError:
+            raise InvalidResponseException('LLM returned an invalid format for response')
 
-        return self.improved_resume
+    def field_names_changed(self) -> set:
+        """
+        Identifies field names that are different between the original and improved resumes.
 
-    def _check_improved_resume_is_dict(self) -> None:
-        if not isinstance(self.improved_resume, dict):
-            raise InvalidResponseException(f'LLM returned non-JSON response:\n{self.improved_resume}')
+        Returns:
+            A set containing the field names that exist in either the original or 
+            improved resume but not both (i.e., the difference between the field name sets).
+        """
 
-    def _check_unchanged_field_names(self) -> None:
         original_field_names = set(self.original_resume.keys())
         new_field_names = set(self.improved_resume.keys())
 
-        if original_field_names != new_field_names:
-            raise InvalidResponseException('Some field names have been changed in the response:\n{self.improved_resume}')
+        changed_fields = original_field_names.symmetric_difference(new_field_names)
 
-    def _check_unchanged_dates(self) -> None:
+        return changed_fields
+
+    def _dates_changed(self) -> List[tuple]:
+        """
+        Identifies field names that are different between the original and improved resumes.
+
+        Returns:
+            A set containing the field names that exist in either the original or 
+            improved resume but not both (i.e., the difference between the field name sets).
+        """
+
         date_fields_changed = []
 
         for key in self.original_resume:
             if 'date' in key.lower() and key in self.improved_resume:
-                if self.original_resume[key] != self.improved_resume[key]:
-                    date_fields_changed.append(key)
+                original_date = self.original_resume[key]
+                new_date = self.improved_resume[key]
+                if original_date != new_date:
+                    date_fields_changed.append((key, f'{original_date} -> {new_date}'))
 
-        if len(date_fields_changed) > 0:
-            raise InvalidResponseException('Some dates have been changed on the resume:\n{self.improved_resume}')
+        return date_fields_changed
 
-    def _check_unchanged_user_data(self) -> None:
+    def _is_user_data_changed(self) -> None:
         user_fields = {'name', 'email', 'phone', 'url', 'location', 'username'}
 
         user_fields_changed = []
@@ -66,14 +82,16 @@ class ImproveMyCV:
         # TODO: apply this to deeply nested keys, as in urls within profiles
         for field in user_fields:
             if field in self.original_resume and field in self.improved_resume:
-                if self.original_resume[field] != self.improved_resume[field]:
-                    user_fields_changed.append(field)
+                original_value = self.original_resume[field]
+                new_value = self.improved_resume[field]
+                if original_value != new_value:
+                    user_fields_changed.append((field, f'{original_value} -> {new_value}'))
 
-        if len(user_fields_changed) > 0:
-            raise InvalidResponseException('Some user data has been changed')
+        return len(user_fields_changed) > 0
 
-    def perform_response_checks(self) -> dict:
-        self._check_improved_resume_is_dict()
-        self._check_unchanged_field_names()
-        self._check_unchanged_dates()
-        self._check_unchanged_user_data()
+    def response_warnings(self) -> dict:
+        return {
+            'field_names_changed': self.field_names_changed(),
+            'dates_changed': self._dates_changed(),
+            'is_user_data_changed': self._is_user_data_changed(),
+        }

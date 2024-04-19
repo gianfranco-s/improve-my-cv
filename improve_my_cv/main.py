@@ -35,5 +35,10 @@ if __name__ == '__main__':
 
     improve = ImproveMyCV(original_resume=resume, job_description=job_description)
     improved_cv = improve.improve_cv()
+    warnings = improve.response_warnings()
 
     print(improved_cv)
+    print(warnings)
+
+    with open('improved_cv.json', 'w') as f:
+        json.dump(improved_cv, f, indent=4)
