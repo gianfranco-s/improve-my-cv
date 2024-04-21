@@ -11,6 +11,7 @@ class PromptCreator:
         **by including relevant keywords** from the job description.
         
         Please only answer with an modified JSON, based on `json_resume`
+        Answer should be a correctly formatted JSON
         Do not provide any other explanation, outside the JSON response
         Do not change any field names
         Do not change any values for the following fields: "name", "email", "phone", "url", "location", "profiles", "education", "certificates", "publications", "languages"
