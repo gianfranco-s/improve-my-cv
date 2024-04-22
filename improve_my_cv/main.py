@@ -4,12 +4,20 @@ from pathlib import Path
 
 from improve_my_cv import resume_dir
 from improve_my_cv.cv_improve import ImproveMyCV
+from improve_my_cv.llm_handlers.gemini import HandleGemini
 from improve_my_cv.log_config import logger
 
 
 def load_json_resume(filepath: Path) -> dict:
     with open(filepath, 'r') as f:
         return json.load(f)
+
+
+def save_operations(improved_cv: dict, filename: str) -> None:
+    logger.info(f'Saving to file {filename}')
+
+    with open(filename, 'w') as f:
+        json.dump(improved_cv, f, indent=4)
 
 
 if __name__ == '__main__':
@@ -35,13 +43,11 @@ if __name__ == '__main__':
     """
 
     improve = ImproveMyCV(original_resume=resume, job_description=job_description)
-    improved_cv = improve.improve_cv()
+    # improved_cv_ollama = improve.improve_cv()
+    improved_cv_gemini = improve.improve_cv(model='gemini-pro', llm_handler=HandleGemini())
 
     warnings = improve.response_warnings()
     if warnings:
         logger.warning(warnings)
 
-    filename = 'improved_cv.json'
-    logger.info(f'Saving to file {filename}')
-    with open(filename, 'w') as f:
-        json.dump(improved_cv, f, indent=4)
+    save_operations(improved_cv=improved_cv_gemini, filename='improved_cv_gemini.json')
