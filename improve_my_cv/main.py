@@ -2,31 +2,23 @@ import json
 
 from pathlib import Path
 
+import streamlit as st
+
 from improve_my_cv import resume_dir
 from improve_my_cv.cv_improve import ImproveMyCV
 from improve_my_cv.log_config import logger
 
+job_description_placeholder = """
+    Example job description:
 
-def load_json_resume(filepath: Path) -> dict:
-    with open(filepath, 'r') as f:
-        return json.load(f)
-
-
-if __name__ == '__main__':
-    resume = load_json_resume(resume_dir / 'example_cv.json')
-    job_description = """
     About the job
     Python Developer
 
-    We are looking for a skilled freelance Python developer to join our team on a project basis. The ideal candidate should have experience in Python programming, including web development frameworks such as Django or Flask. Responsibilities will include developing and maintaining Python-based applications, collaborating with team members to define project requirements, and ensuring code quality and performance. This is a remote position with flexible hours.
+    We are looking for a skilled freelance Python developer to join our team on a project basis.
 
     Requirements:
     Proficiency in Python programming language
     Experience with web development frameworks like Django or Flask
-    Familiarity with front-end technologies (HTML, CSS, JavaScript)
-    Strong problem-solving skills and attention to detail
-    Ability to work independently and meet project deadlines
-    Excellent communication and collaboration skills
 
     Nice to have:
     Experience with database systems (e.g., MySQL, PostgreSQL)
@@ -34,14 +26,40 @@ if __name__ == '__main__':
     Familiarity with Agile development methodologies
     """
 
-    improve = ImproveMyCV(original_resume=resume, job_description=job_description)
-    improved_cv = improve.improve_cv()
 
-    warnings = improve.response_warnings()
-    if warnings:
-        logger.warning(warnings)
+def load_json_resume(filepath: Path) -> dict:
+    with open(filepath, 'r') as f:
+        return json.load(f)
 
-    filename = 'improved_cv.json'
+
+def save_operations(improved_cv: dict, filename: str) -> None:
     logger.info(f'Saving to file {filename}')
+
     with open(filename, 'w') as f:
         json.dump(improved_cv, f, indent=4)
+
+
+def streamlit_ui():
+    st.title("Improve My CV")
+
+    job_description = st.text_area("Enter Job Description", height=200, placeholder=job_description_placeholder)
+    uploaded_file = st.file_uploader("Upload your CV (JSON format)", type="json")
+
+    if uploaded_file is not None and job_description:
+        resume = json.load(uploaded_file)
+
+        improve = ImproveMyCV(original_resume=resume, job_description=job_description)
+        improved_cv = improve.improve_cv()
+
+        warnings = improve.response_warnings()
+        if warnings:
+            logger.warning(warnings)
+            st.warning(warnings)
+
+        filename = 'improved_cv.json'
+        save_operations(improved_cv=improved_cv, filename=filename)
+        st.success(f"Improved CV has been saved to '{filename}'")
+
+
+if __name__ == "__main__":
+    streamlit_ui()
