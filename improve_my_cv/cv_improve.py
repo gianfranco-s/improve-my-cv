@@ -2,10 +2,11 @@ import json
 
 from typing import List
 
-from improve_my_cv.llm_handler import LLMHandler, HandleOllama
+from improve_my_cv.llm_handlers.base_handler import LLMHandler
+from improve_my_cv.llm_handlers.ollama import HandleOllama
 from improve_my_cv.prompt_creator import PromptCreator
 
-DEFAULT_MODEL = 'llama2'
+DEFAULT_MODEL = 'llama3'
 DEFAULT_LLMHANDLER = HandleOllama()
 
 
