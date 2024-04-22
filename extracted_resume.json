@@ -1,0 +1,198 @@
+{
+    "label": "Python Developer",
+    "summary": "Passionate about Python development, I find joy in crafting solutions that resonate with my enthusiasm. Nestled in the serene beauty of Patagonia, near Mount Piltriquitr\u00f3n, I cherish moments of coding, baking, and trekking with my loved ones\u2014Luca, Francesca, and Luz.",
+    "work": [
+        {
+            "position": "Lead Python Dev",
+            "summary": "Currently leading a team of junior devs to create an LLM-based product. Designed and developed Flask microsites for corporate use. Managed deployment across DEV, QAS, UAT and PRD environments. Built Python ETL pipeline for Oracle to SAP HANA data migration. Utilized SAP BAS and SAP HANA for development and deployment. Conducted regular code reviews. Advocated for and implemented Test-Driven Development. Most projects for AySA are geared towards migrating local workflows to cloud-based ones.",
+            "highlights": [
+                "Flask",
+                "DTAP environments",
+                "ETL",
+                "SAP HANA",
+                "SAP BTP",
+                "SAP AI Core",
+                "Code Reviews",
+                "TDD",
+                "MySQL",
+                "React",
+                "Pytest"
+            ]
+        },
+        {
+            "position": "Cloud Developer / DevOps",
+            "summary": "Developed an IoT project using MQTT to monitor sensors based on ESP32. Optimized development workflows with Docker, orchestrating In\ufb02uxDB-Grafana-MQTT containers using docker-compose. Developed Python mock sensors to validate container functionality. Deployed production and staging environments on AWS. Contributed to international client technical sales pitches.",
+            "highlights": [
+                "Python",
+                "MQTT",
+                "IoT",
+                "Docker",
+                "DEV and PRD environments",
+                "AWS EC2",
+                "InfluxDB",
+                "Grafana",
+                "SSH"
+            ]
+        },
+        {
+            "position": "Full Stack developer",
+            "summary": "Maintained a complex Flask project for a multinational Fintech \ufb01rm. Managed user data in PostgreSQL databases. Integrated partner REST and SOAP APIs across multiple countries. Conducted regular code peer reviews. Developed Selenium-based end-to-end (E2E) Behave tests.",
+            "highlights": [
+                "Flask",
+                "BDD",
+                "Selenium",
+                "REST",
+                "SOAP",
+                "PostgreSQL",
+                "Peer Code Reviews"
+            ]
+        },
+        {
+            "position": "Python developer",
+            "summary": "Dockerized and deployed apps on AWS, optimizing for legacy Ubuntu versions. Conducted Cypress end-to-end (E2E) testing to ensure quality and reliability. Integrated MailShake to the main Django app using REST API, enhancing cold-email reporting. Responded to security questionnaires from prospective clients, addressing inquiries about our user data protection policies, Software Development Life Cycle (SDLC), and the security practices we would implement.",
+            "highlights": [
+                "Docker",
+                "Linux",
+                "MailShake",
+                "Cypress",
+                "Security Compliance",
+                "SDLC"
+            ]
+        },
+        {
+            "position": "IoT developer",
+            "summary": "Developed an Android app for Bluetooth Low Energy connectivity to an embedded turbine speed controller. Designed the mobile app frontend using React Native and TypeScript. Implemented backend connectivity with ESP32 using C++ and Platform IO.",
+            "highlights": [
+                "TypeScript",
+                "Android",
+                "C/C++",
+                "ESP32",
+                "PlatformIO"
+            ]
+        },
+        {
+            "position": "University Teacher and Researcher",
+            "summary": "Taught linear control strategies and numerical simulation techniques using MATLAB and Python. Designed a sun follower system using a 3-phase motor and SCADA PLC. Implemented control logic in Ladder language and created LabView dashboards. Developed electromechanical automations with Arduino and C language.",
+            "highlights": [
+                "MATLAB",
+                "C/C++",
+                "PLC",
+                "Arduino",
+                "Python",
+                "Circuit Boards",
+                "Assembly"
+            ]
+        }
+    ],
+    "publications": [
+        {
+            "summary": "Description here"
+        }
+    ],
+    "skills": [
+        {
+            "name": "Front",
+            "keywords": [
+                "HTML",
+                "CSS",
+                "JavaScript",
+                "React/TypeScript",
+                "tailwindcss",
+                "Bootstrap"
+            ]
+        },
+        {
+            "name": "Back",
+            "keywords": [
+                "Python",
+                "Flask",
+                "FastAPI",
+                "Pandas",
+                "Linux",
+                "Docker",
+                "Gherkin",
+                "Cypress",
+                "AWS EC2",
+                "SSH",
+                "PostgreSQL/MySQL",
+                "InfluxDB",
+                "ORM",
+                "SAP HANA/SAP BAS/SAP BTP",
+                "CloudFoundry",
+                "C/C++",
+                "Assembly",
+                "MATLAB"
+            ]
+        },
+        {
+            "name": "Tools",
+            "keywords": [
+                "Git",
+                "GitHub",
+                "VSCode",
+                "Slack",
+                "Jira"
+            ]
+        }
+    ],
+    "interests": [
+        {
+            "name": "Family life",
+            "keywords": null
+        },
+        {
+            "name": "Martial arts",
+            "keywords": [
+                "Full Contact",
+                "Muay Thai",
+                "Tai Chi Chuan"
+            ]
+        },
+        {
+            "name": "Trekking",
+            "keywords": null
+        }
+    ],
+    "projects": [
+        {
+            "description": "We use people's faces to take attendance. Currently marketed towards Universities.",
+            "highlights": [
+                "FastAPI",
+                "React",
+                "AWS",
+                "Computer Vision",
+                "Pytest"
+            ]
+        },
+        {
+            "description": "Improve a JSON resume by asking an LLM. Can be either commercial, like OpenAI or local, like Ollama.",
+            "highlights": [
+                "Python",
+                "Ollama",
+                "Requests",
+                "SDK",
+                "FastAPI",
+                "Pytest"
+            ]
+        },
+        {
+            "description": "Render a resume based on a JSON file, using the jsonresume standard. You're looking at it :) ",
+            "highlights": [
+                "ReactJS",
+                "TypeScript",
+                "TailwindCSS",
+                "NextJS",
+                "Vercel"
+            ]
+        },
+        {
+            "description": "For corporative use within a large company. It would provide on-the-fly assistance to working team leaders.",
+            "highlights": [
+                "SAP BTP",
+                "SAP AI Core",
+                "SAP AI Launchpad",
+                "Flask"
+            ]
+        }
+    ]
+}

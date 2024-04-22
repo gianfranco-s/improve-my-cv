@@ -2,7 +2,7 @@ import json
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler
 from improve_my_cv.log_config import logger
-from improve_my_cv.prompt_creator import PromptCreator
+from improve_my_cv.prompt_handler.prompt_creator import PromptCreator
 
 
 class InvalidModelException(Exception):
