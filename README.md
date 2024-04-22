@@ -7,9 +7,18 @@ This project is designed to use LLMs to improve a json-resume based on a particu
    ```
    poetry install
    ```
-3. Run the main script from the project's root dir
+   
+3. To run the project
+   Run the script from the project's root dir
+
+   ### Using the CLI
    ```
-   python3 -m improve_my_cv.main
+   python3 -m improve_my_cv.ui_cli
+   ```
+
+   ### Using Streamlit (in a browser)
+   ```
+   streamlit run improve_my_cv/ui_streamlit.py
    ```
 
 ## Useful documentation for development
