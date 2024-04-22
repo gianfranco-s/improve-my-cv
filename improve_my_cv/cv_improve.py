@@ -36,10 +36,10 @@ class ImproveMyCV:
             self.improved_resume = json.loads(model_response.text)
 
             if not isinstance(self.improved_resume, dict):
-                raise InvalidResponseException('LLM returned an invalid format for response')
+                raise InvalidResponseException(f'LLM returned an invalid format for response\n{self.improved_resume}')
 
-        except json.decoder.JSONDecodeError:
-            raise InvalidResponseException('LLM returned an invalid format for response')
+        except json.decoder.JSONDecodeError as e:
+            raise InvalidResponseException(f'LLM returned an invalid format for response\ntype:{type(model_response.text)}\n{model_response.text}')
 
         return self.improved_resume
 
