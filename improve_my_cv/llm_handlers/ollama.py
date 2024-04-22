@@ -4,6 +4,8 @@ import requests
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler, LLMHandlerException, ModelResponse
 
+DEFAULT_OLLAMA_MODEL = 'llama2'
+
 
 class HandleOllama(LLMHandler):
     def __init__(self, api_url: str = 'http://localhost:11434/api/generate') -> None:

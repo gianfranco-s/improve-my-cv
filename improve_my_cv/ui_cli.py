@@ -1,6 +1,7 @@
 from improve_my_cv import resume_dir
 from improve_my_cv.cv_improve import ImproveMyCV
 from improve_my_cv.log_config import logger
+from improve_my_cv.llm_handlers.ollama import HandleOllama, DEFAULT_OLLAMA_MODEL
 from improve_my_cv.utils import load_json_resume, save_operations
 
 job_description = """
@@ -27,6 +28,7 @@ def manual_interface():
     resume = load_json_resume(resume_dir / 'example_cv.json')
 
     improve = ImproveMyCV(original_resume=resume, job_description=job_description)
+    improve.llm_setup(model=DEFAULT_OLLAMA_MODEL, llm_handler=HandleOllama())
     improved_cv = improve.improve_cv()
 
     warnings = improve.response_warnings()

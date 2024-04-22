@@ -31,12 +31,13 @@ class ImproveMyCV:
         logger.debug(f'prompt: {self.prompt}')
 
     def llm_setup(self, model: str, llm_handler: LLMHandler) -> None:
-        if self.model is None or self.llm_handler is None:
-            raise InvalidModelException(f'You must select a model and llm_handler by running {__name__}')
         self.model = model
         self.llm_handler = llm_handler
-
+        if self.model is None or self.llm_handler is None:
+            raise InvalidModelException('You must select a model and llm_handler by running llm_setup()')
+    
     def improve_cv(self) -> dict:
+        self.llm_setup(self.model, self.llm_handler)
         logger.info(f'Attempting to improve resume with model {self.model}')
         self.llm_handler.generate(prompt=self.prompt, model=self.model)
         model_response = self.llm_handler.standardize_response()
