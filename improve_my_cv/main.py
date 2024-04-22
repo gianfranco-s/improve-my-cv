@@ -43,7 +43,7 @@ if __name__ == '__main__':
     """
 
     improve = ImproveMyCV(original_resume=resume, job_description=job_description)
-    improved_cv_ollama = improve.improve_cv()
+    # improved_cv_ollama = improve.improve_cv()
     improved_cv_gemini = improve.improve_cv(model='gemini-pro', llm_handler=HandleGemini())
 
     warnings = improve.response_warnings()

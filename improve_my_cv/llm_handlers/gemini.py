@@ -5,8 +5,8 @@ import google.generativeai as genai
 from datetime import datetime
 
 from dotenv import dotenv_values
+from google.ai.generativelanguage import GenerationConfig
 from google.ai.generativelanguage_v1beta.types.generative_service import GenerateContentResponse
-from protobuf3_to_dict import protobuf_to_dict
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler, LLMHandlerException, ModelResponse
 
@@ -23,22 +23,31 @@ class HandleGemini(LLMHandler):
     def generate(self,
                  prompt: str,
                  model: str = 'gemini-pro',
-                 stream: bool = False,
                  safety_settings: dict = dict()) -> GenerateContentResponse:
-        
+        generation_config = GenerationConfig({
+            'candidate_count': 1,
+            'temperature': 0.9,
+        })        
         gemini_model = genai.GenerativeModel(model)
 
         try:
-            response = gemini_model.generate_content(prompt, stream=stream, safety_settings=safety_settings)
+            responses = gemini_model.generate_content(prompt, stream=True, safety_settings=safety_settings, generation_config=generation_config)
+            responses.resolve()
 
         except Exception as e:
             raise LLMHandlerException(e)
 
-        self.response = response._result
-        print(type(self.response))
+        self.response = responses._result
+
         return self.response
 
     def standardize_response(self) -> ModelResponse:
+        try:
+            response_text = self.response.candidates[0].content.parts[0].text
+
+        except IndexError as e:
+            print(e)
+            print(self.response)
 
         return ModelResponse(
             context=self.response.prompt_feedback,
@@ -46,7 +55,7 @@ class HandleGemini(LLMHandler):
             model='user defined',
             prompt_eval_duration_seconds=0.0,
             total_duration_seconds=0.0,
-            text=self.response.candidates[0].content.parts,
+            text=response_text.replace("```json", "").replace("```", ""),
         )
 
 
@@ -59,4 +68,3 @@ if __name__ == '__main__':
     response = handle_model.generate(f'Please Create a resume in json format')
     standard_resp = handle_model.standardize_response()
     print(standard_resp.text)
-    print(type(standard_resp.text))
