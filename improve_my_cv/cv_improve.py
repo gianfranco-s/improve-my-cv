@@ -2,6 +2,7 @@ import json
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler
 from improve_my_cv.llm_handlers.ollama import HandleOllama
+from improve_my_cv.log_config import logger
 from improve_my_cv.prompt_creator import PromptCreator
 
 DEFAULT_MODEL = 'llama3'
@@ -25,8 +26,10 @@ class ImproveMyCV:
         self.original_resume = original_resume
         self.prompt = PromptCreator(json_resume=json.dumps(self.original_resume), job_description=job_description).create_prompt()
         self.improved_resume: dict = None
+        logger.debug(f'prompt: {self.prompt}')
 
     def improve_cv(self, model: str = DEFAULT_MODEL, llm_handler: LLMHandler = DEFAULT_LLMHANDLER) -> dict:
+        logger.info(f'Attempting to improve resume with model {model}')
         llm_handler.generate(prompt=self.prompt, model=model)
         model_response = llm_handler.standardize_response()
 
@@ -39,6 +42,7 @@ class ImproveMyCV:
         except json.decoder.JSONDecodeError as e:
             raise InvalidResponseException(f'LLM returned an invalid format for response\n{e}\ntype:{type(model_response.text)}\n{model_response.text}')
 
+        logger.info('Done')
         return self.improved_resume
 
     def _field_names_changed(self) -> set:
@@ -92,9 +96,14 @@ class ImproveMyCV:
 
         return len(user_fields_changed) > 0
 
-    def response_warnings(self) -> dict:
-        return {
-            'field_names_changed': self._field_names_changed(),
-            'dates_changed': self._dates_changed(),
-            'is_user_data_changed': self._is_user_data_changed(),
-        }
+    def response_warnings(self) -> dict | None:
+        field_names_changed = self._field_names_changed()
+        dates_changed = self._dates_changed()
+        is_user_data_changed = self._is_user_data_changed()
+
+        if any((len(field_names_changed) > 0, len(dates_changed) > 0, is_user_data_changed)):
+            return {
+                'field_names_changed': field_names_changed,
+                'dates_changed': dates_changed,
+                'is_user_data_changed': is_user_data_changed,
+            }

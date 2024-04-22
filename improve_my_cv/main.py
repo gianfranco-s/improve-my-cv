@@ -4,6 +4,7 @@ from pathlib import Path
 
 from improve_my_cv import resume_dir
 from improve_my_cv.cv_improve import ImproveMyCV
+from improve_my_cv.log_config import logger
 
 
 def load_json_resume(filepath: Path) -> dict:
@@ -36,7 +37,11 @@ if __name__ == '__main__':
     improve = ImproveMyCV(original_resume=resume, job_description=job_description)
     improved_cv = improve.improve_cv()
 
-    print(improve.response_warnings())
+    warnings = improve.response_warnings()
+    if warnings:
+        logger.warning(warnings)
 
-    with open('improved_cv.json', 'w') as f:
+    filename = 'improved_cv.json'
+    logger.info(f'Saving to file {filename}')
+    with open(filename, 'w') as f:
         json.dump(improved_cv, f, indent=4)
