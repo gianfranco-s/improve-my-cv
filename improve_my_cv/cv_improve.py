@@ -1,7 +1,5 @@
 import json
 
-from typing import List
-
 from improve_my_cv.llm_handlers.base_handler import LLMHandler
 from improve_my_cv.llm_handlers.ollama import HandleOllama
 from improve_my_cv.prompt_creator import PromptCreator
@@ -39,7 +37,7 @@ class ImproveMyCV:
                 raise InvalidResponseException(f'LLM returned an invalid format for response\n{self.improved_resume}')
 
         except json.decoder.JSONDecodeError as e:
-            raise InvalidResponseException(f'LLM returned an invalid format for response\ntype:{type(model_response.text)}\n{model_response.text}')
+            raise InvalidResponseException(f'LLM returned an invalid format for response\n{e}\ntype:{type(model_response.text)}\n{model_response.text}')
 
         return self.improved_resume
 
@@ -48,7 +46,7 @@ class ImproveMyCV:
         Identifies field names that are different between the original and improved resumes.
 
         Returns:
-            A set containing the field names that exist in either the original or 
+            A set containing the field names that exist in either the original or
             improved resume but not both (i.e., the difference between the field name sets).
         """
 
@@ -64,7 +62,7 @@ class ImproveMyCV:
         Identifies field names that are different between the original and improved resumes.
 
         Returns:
-            A set containing the field names that exist in either the original or 
+            A set containing the field names that exist in either the original or
             improved resume but not both (i.e., the difference between the field name sets).
         """
 
