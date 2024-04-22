@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Newly created resume
-improved_cv.json
+improved_cv*.json
