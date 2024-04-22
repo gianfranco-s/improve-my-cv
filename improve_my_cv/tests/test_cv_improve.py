@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from improve_my_cv.cv_improve import ImproveMyCV, InvalidResponseException, InvalidResumeInputException

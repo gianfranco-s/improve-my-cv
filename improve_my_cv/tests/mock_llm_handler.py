@@ -1,6 +1,6 @@
 import json
 
-from improve_my_cv.llm_handler import LLMHandler, ModelResponse
+from improve_my_cv.llm_handlers.base_handler import LLMHandler, ModelResponse
 
 
 class MockLLMHandler(LLMHandler):
