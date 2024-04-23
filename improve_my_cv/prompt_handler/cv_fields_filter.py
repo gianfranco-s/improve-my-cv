@@ -15,6 +15,8 @@ def _extract_fields(resume: dict, allowed_sections: tuple) -> dict:
     extracted_resume = dict()
 
     for section in allowed_sections:
+        if section not in resume.keys():
+            continue
         extracted_resume[section] = resume[section]
     
     return extracted_resume
@@ -26,9 +28,14 @@ def filter_resume(resume: dict, allowed_sections: dict = default_allowed_resume_
     ext_fields = dict()
 
     for section, subsections in allowed_sections.items():
+        if section not in resume.keys():
+            continue
+
         resume_section = resume[section]
+
         if resume_section is None:
             continue
+
         if not isinstance(resume_section, list):
             ext_fields.update({section: _extract_fields(resume_section, subsections)})
         else:

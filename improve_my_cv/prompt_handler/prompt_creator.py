@@ -10,6 +10,7 @@ class PromptCreator:
     job_description: str
     json_resume: dict
     filtered_json_resume: dict = None
+    apply_field_filters: bool = True
     prompt_template: str = "You are a robot that only outputs JSON objects. " \
         "Your role is an experienced recruiter, who improves a current resume with relevant words from a job description. " \
         "You'll be given two parameters and their values. " \
@@ -25,8 +26,10 @@ class PromptCreator:
         "`json_resume`\n{json_resume}\n" 
     
     def __post_init__(self):
-        self.filtered_json_resume = filter_resume(self.json_resume)
+        if self.apply_field_filters:
+            self.filtered_json_resume = filter_resume(self.json_resume)
 
     def create_prompt(self) -> str:
+        json_resume = self.filtered_json_resume if self.apply_field_filters else self.json_resume
         return self.prompt_template.format(job_description=self.job_description,
-                                           json_resume=json.dumps(self.filtered_json_resume, indent=4))
+                                           json_resume=json.dumps(json_resume, indent=4))
