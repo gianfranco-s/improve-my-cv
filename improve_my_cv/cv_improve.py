@@ -2,6 +2,7 @@ import json
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler
 from improve_my_cv.log_config import logger
+from improve_my_cv.post_processor.resume_rebuild import ResumeRebuilder
 from improve_my_cv.prompt_handler.prompt_creator import PromptCreator
 
 
@@ -46,9 +47,9 @@ class ImproveMyCV:
         model_response = self.llm_handler.standardize_response()
 
         try:
-            self.improved_resume = json.loads(model_response.text)
+            improved_resume = json.loads(model_response.text)
 
-            if not isinstance(self.improved_resume, dict):
+            if not isinstance(improved_resume, dict):
                 raise InvalidResponseException(f'LLM returned an invalid format for response\n{self.improved_resume}')
 
         except json.decoder.JSONDecodeError as e:
@@ -57,6 +58,8 @@ class ImproveMyCV:
                                            f'{model_response.text}')
 
         logger.info('Done')
+        rebuilder = ResumeRebuilder(original_resume=self.original_resume, filtered_resume=improved_resume)
+        self.improved_resume = rebuilder.rebuild()
         return self.improved_resume
 
     def response_warnings(self) -> dict | None:
