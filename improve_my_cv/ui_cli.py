@@ -1,7 +1,7 @@
 from improve_my_cv import resume_dir
 from improve_my_cv.cv_improve import ImproveMyCV
+from improve_my_cv.llm_handlers.ollama import DEFAULT_OLLAMA_MODEL, HandleOllama
 from improve_my_cv.log_config import logger
-from improve_my_cv.llm_handlers.ollama import HandleOllama, DEFAULT_OLLAMA_MODEL
 from improve_my_cv.utils import load_json_resume, save_operations
 
 job_description = """

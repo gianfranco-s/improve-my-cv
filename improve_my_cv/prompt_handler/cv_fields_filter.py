@@ -18,7 +18,7 @@ def _extract_fields(resume: dict, allowed_sections: tuple) -> dict:
         if section not in resume.keys():
             continue
         extracted_resume[section] = resume[section]
-    
+
     return extracted_resume
 
 
@@ -44,14 +44,14 @@ def filter_resume(resume: dict, allowed_sections: dict = default_allowed_resume_
                 filtered_item = _extract_fields(item, subsections)
                 array_items.append(filtered_item)
             ext_fields.update({section: array_items})
-    
+
     return ext_fields
 
 
 if __name__ == '__main__':
     with open('/home/gsalomone/Documents/06_gian_cv/my-json-resume/src/data/base_cv.json', 'r') as f:
         resume = json.load(f)
-    
+
     ext_resume = filter_resume(resume)
 
     with open('extracted_resume.json', 'w') as f:

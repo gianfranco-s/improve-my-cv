@@ -1,5 +1,4 @@
 import json
-
 from pathlib import Path
 
 from improve_my_cv.log_config import logger

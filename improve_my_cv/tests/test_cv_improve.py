@@ -1,8 +1,8 @@
 import pytest
 
 from improve_my_cv.cv_improve import ImproveMyCV, InvalidResponseException, InvalidResumeInputException
-from improve_my_cv.tests.mock_llm_handler import MockLLMHandler
 from improve_my_cv.tests import valid_resume
+from improve_my_cv.tests.mock_llm_handler import MockLLMHandler
 
 
 @pytest.fixture

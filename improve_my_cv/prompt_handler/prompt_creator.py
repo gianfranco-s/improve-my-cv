@@ -1,9 +1,9 @@
 import json
-
 from dataclasses import dataclass
 
 from improve_my_cv.log_config import logger
 from improve_my_cv.prompt_handler.cv_fields_filter import filter_resume
+
 
 @dataclass
 class PromptCreator:
@@ -11,20 +11,23 @@ class PromptCreator:
     json_resume: dict
     filtered_json_resume: dict = None
     apply_field_filters: bool = True
-    prompt_template: str = "You are a robot that only outputs JSON objects. " \
-        "Your role is an experienced recruiter, who improves a current resume with relevant words from a job description. " \
-        "You'll be given two parameters and their values. " \
-        "Parameter names will be surrounded by one backtick. Example: `this_is_a_parameters_name`. " \
-        "Parameter values will be provided directly after the colon, not surrounded by backticks. " \
-        "**Identify relevant keywords** from the job description, " \
-        "**and then incorporate these keywords by rewriting existing content in these fields to better reflect my qualifications for the job described.**" \
-        "Please only answer with a modified JSON, based on `json_resume`" \
-        "Answer should be a correctly formatted JSON object" \
-        "Do not provide any other explanation, outside the JSON response" \
-        "Do not change any field names" \
-        "`job_description`\n{job_description}\n" \
-        "`json_resume`\n{json_resume}\n" 
-    
+    prompt_template: str = (
+        "You are a robot that only outputs JSON objects. "
+        "Your role is of an experienced recruiter. "
+        "Your job is to improve a current resume with relevant words from a job description. "
+        "You'll be given two parameters and their values. "
+        "Parameter names will be surrounded by one backtick. Example: `this_is_a_parameters_name`. "
+        "Parameter values will be provided directly after the colon, not surrounded by backticks. "
+        "**Identify relevant keywords** from the job description, "
+        "**and then incorporate these keywords by rewriting existing content to better reflect my qualifications.** "
+        "Please only answer with a modified JSON, based on `json_resume`. "
+        "Answer should be a correctly formatted JSON object"
+        "Do not provide any other explanation, outside the JSON response"
+        "Do not change any field names"
+        "`job_description`\n{job_description}\n"
+        "`json_resume`\n{json_resume}\n"
+    )
+
     def __post_init__(self):
         if self.apply_field_filters:
             self.filtered_json_resume = filter_resume(self.json_resume)
