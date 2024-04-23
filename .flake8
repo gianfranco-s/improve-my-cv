@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 120
+per-file-ignores =
+    # valid_resume: import but unused, redefinition of unused
+    improve_my_cv/tests/test_cv_improve.py: F401, F811
+    improve_my_cv/tests/test_prompt_creator.py: F401, F811

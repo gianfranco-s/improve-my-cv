@@ -38,7 +38,7 @@ class ImproveMyCV:
         self.llm_handler = llm_handler
         if self.model is None or self.llm_handler is None:
             raise InvalidModelException('You must select a model and llm_handler by running llm_setup()')
-    
+
     def improve_cv(self) -> dict:
         self.llm_setup(self.model, self.llm_handler)
         logger.info(f'Attempting to improve resume with model {self.model}')
@@ -52,7 +52,9 @@ class ImproveMyCV:
                 raise InvalidResponseException(f'LLM returned an invalid format for response\n{self.improved_resume}')
 
         except json.decoder.JSONDecodeError as e:
-            raise InvalidResponseException(f'LLM returned an invalid format for response\n{e}\ntype:{type(model_response.text)}\n{model_response.text}')
+            raise InvalidResponseException('LLM returned an invalid format for response\n'
+                                           f'{e}\ntype:{type(model_response.text)}\n'
+                                           f'{model_response.text}')
 
         logger.info('Done')
         return self.improved_resume
