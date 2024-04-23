@@ -2,7 +2,9 @@ import json
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler
 from improve_my_cv.log_config import logger
+from improve_my_cv.post_processor.resume_rebuild import ResumeRebuilder
 from improve_my_cv.prompt_handler.prompt_creator import PromptCreator
+from improve_my_cv.utils import are_keys_the_same
 
 
 class InvalidModelException(Exception):
@@ -39,16 +41,16 @@ class ImproveMyCV:
         if self.model is None or self.llm_handler is None:
             raise InvalidModelException('You must select a model and llm_handler by running llm_setup()')
 
-    def improve_cv(self) -> dict:
+    def improve_cv(self, rebuild_resume: bool = True) -> dict:
         self.llm_setup(self.model, self.llm_handler)
         logger.info(f'Attempting to improve resume with model {self.model}')
         self.llm_handler.generate(prompt=self.prompt, model=self.model)
         model_response = self.llm_handler.standardize_response()
 
         try:
-            self.improved_resume = json.loads(model_response.text)
+            improved_resume = json.loads(model_response.text)
 
-            if not isinstance(self.improved_resume, dict):
+            if not isinstance(improved_resume, dict):
                 raise InvalidResponseException(f'LLM returned an invalid format for response\n{self.improved_resume}')
 
         except json.decoder.JSONDecodeError as e:
@@ -57,30 +59,20 @@ class ImproveMyCV:
                                            f'{model_response.text}')
 
         logger.info('Done')
+        if rebuild_resume:
+            rebuilder = ResumeRebuilder(original_resume=self.original_resume, filtered_resume=improved_resume)
+            self.improved_resume = rebuilder.rebuild()
+        else:
+            logger.warning('If resume is not rebuilt properly, some fields may not appear in the final version.')
+            self.improved_resume = improved_resume
+
         return self.improved_resume
 
     def response_warnings(self) -> dict | None:
         """Check if static values like field names have changed."""
-        field_names_changed = self._field_names_changed(self.filtered_resume, self.improved_resume)
+        field_names_changed = not are_keys_the_same(self.filtered_resume, self.improved_resume)
 
-        if len(field_names_changed) > 0:
+        if field_names_changed:
             return {
                 'field_names_changed': field_names_changed,
             }
-
-    @staticmethod
-    def _field_names_changed(original: dict, improved: dict) -> set:
-        """
-        Identifies field names that are different between the original and improved resumes.
-
-        Returns:
-            A set containing the field names that exist in either the original or
-            improved resume but not both (i.e., the difference between the field name sets).
-        """
-
-        original_field_names = set(original.keys())
-        new_field_names = set(improved.keys())
-
-        changed_fields = original_field_names.symmetric_difference(new_field_names)
-
-        return changed_fields

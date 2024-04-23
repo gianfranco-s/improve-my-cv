@@ -1,3 +1,4 @@
+import copy
 import json
 
 from improve_my_cv.llm_handlers.base_handler import LLMHandler, ModelResponse
@@ -46,14 +47,30 @@ class MockLLMHandler(LLMHandler):
 def test_action(action: str, valid_input: dict) -> str:
 
     output = {
-        'valid_output': {key: f'{val}_new' if 'date' not in key.lower() and 'name' not in key.lower() else val for key, val in valid_input.items()},
+        'valid_output': _generate_valid_output(valid_input),
         'invalid_output': 'This is a non json text',
-        'changed_field_names': {f'{key}_new': val for key, val in valid_input.items()},
-        'changed_dates': {key: f'{val}_new' if 'date' in key.lower() else val for key, val in valid_input.items()},
-        'changed_user_data': {key: f'{val}_new' if 'name' in key.lower() else val for key, val in valid_input.items()},
+        'changed_field_names': _generate_output_with_changed_field_names(valid_input),
     }
 
     if action not in output.keys():
         raise ValueError(f'Invalid test action {action}')
 
     return json.dumps(output.get(action))
+
+
+def _generate_valid_output(valid_input: dict) -> dict:
+    """Hardcoded based on current values of `valid_resume`"""
+    updated_output = copy.deepcopy(valid_input)
+    updated_output['basics'].update({'label': 'value2_new'})
+    updated_output['work'][0].update({'position': 'President_new'})
+    updated_output['work'][1].update({'position': 'Astronaut_new'})
+    return updated_output
+
+
+def _generate_output_with_changed_field_names(valid_input: dict) -> dict:
+    """Hardcoded based on current values of `valid_resume`"""
+    updated_output = copy.deepcopy(valid_input)
+    updated_output['basics']['label_new'] = updated_output['basics'].pop('label')
+    for item in updated_output['work']:
+        item['position_new'] = item.pop('position')
+    return updated_output
