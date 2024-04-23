@@ -1,4 +1,4 @@
-from improve_my_cv.prompt_creator import PromptCreator
+from improve_my_cv.prompt_handler.prompt_creator import PromptCreator
 
 
 def test_prompt_creator_create_prompt_with_valid_strings():
