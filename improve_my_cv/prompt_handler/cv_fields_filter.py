@@ -20,10 +20,8 @@ def _extract_fields(resume: dict, allowed_sections: tuple) -> dict:
     return extracted_resume
 
 
-def filter_resume(resume: str, allowed_sections: dict = default_allowed_resume_values) -> dict:
-    """Filters by allowed_sections, to avoid having the LLM changing unwanted fields.
-    resume should be JSON-like"""
-    resume = json.loads(resume)
+def filter_resume(resume: dict, allowed_sections: dict = default_allowed_resume_values) -> dict:
+    """Filters by allowed_sections, to avoid having the LLM changing unwanted fields."""
 
     ext_fields = dict()
 
