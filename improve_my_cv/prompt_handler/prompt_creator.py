@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 
 
+from improve_my_cv.prompt_handler.cv_fields_filter import filter_resume
+
+
 @dataclass
 class PromptCreator:
     job_description: str
@@ -35,4 +38,4 @@ class PromptCreator:
 
     def create_prompt(self) -> str:
         return self.prompt_template.format(job_description=self.job_description,
-                                           json_resume=self.json_resume)
+                                           json_resume=filter_resume(self.json_resume))

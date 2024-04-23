@@ -20,8 +20,11 @@ def _extract_fields(resume: dict, allowed_sections: tuple) -> dict:
     return extracted_resume
 
 
-def filter_resume(resume: dict, allowed_sections: dict = default_allowed_resume_values) -> dict:
-    """Filters by allowed_sections, to avoid having the LLM changing unwanted fields."""
+def filter_resume(resume: str, allowed_sections: dict = default_allowed_resume_values) -> dict:
+    """Filters by allowed_sections, to avoid having the LLM changing unwanted fields.
+    resume should be JSON-like"""
+    resume = json.loads(resume)
+
     ext_fields = dict()
 
     for section, subsections in allowed_sections.items():
@@ -29,7 +32,7 @@ def filter_resume(resume: dict, allowed_sections: dict = default_allowed_resume_
         if resume_section is None:
             continue
         if not isinstance(resume_section, list):
-            ext_fields.update(_extract_fields(resume_section, subsections))
+            ext_fields.update({section: _extract_fields(resume_section, subsections)})
         else:
             array_items = []
             for item in resume_section:
