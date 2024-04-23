@@ -58,15 +58,12 @@ class ImproveMyCV:
         return self.improved_resume
 
     def response_warnings(self) -> dict | None:
+        """Check if static values like field names have changed."""
         field_names_changed = self._field_names_changed(self.filtered_resume, self.improved_resume)
-        dates_changed = self._dates_changed(self.filtered_resume, self.improved_resume)
-        is_user_data_changed = self._is_user_data_changed(self.filtered_resume, self.improved_resume)
 
-        if any((len(field_names_changed) > 0, len(dates_changed) > 0, is_user_data_changed)):
+        if len(field_names_changed) > 0:
             return {
                 'field_names_changed': field_names_changed,
-                'dates_changed': dates_changed,
-                'is_user_data_changed': is_user_data_changed,
             }
 
     @staticmethod
@@ -85,40 +82,3 @@ class ImproveMyCV:
         changed_fields = original_field_names.symmetric_difference(new_field_names)
 
         return changed_fields
-
-    @staticmethod
-    def _dates_changed(original: dict, improved: dict) -> dict:
-        """
-        Identifies field names that are different between the original and improved resumes.
-
-        Returns:
-            A set containing the field names that exist in either the original or
-            improved resume but not both (i.e., the difference between the field name sets).
-        """
-
-        date_fields_changed = dict()
-
-        for key in original:
-            if 'date' in key.lower() and key in improved:
-                original_date = original[key]
-                new_date = improved[key]
-                if original_date != new_date:
-                    date_fields_changed.update({key: f'{original_date} -> {new_date}'})
-
-        return date_fields_changed
-
-    @staticmethod
-    def _is_user_data_changed(original: dict, improved: dict) -> bool:
-        user_fields = {'name', 'email', 'phone', 'url', 'location', 'username'}
-
-        user_fields_changed = []
-
-        # TODO: apply this to deeply nested keys, as in urls within profiles
-        for field in user_fields:
-            if field in original and field in improved:
-                original_value = original[field]
-                new_value = improved[field]
-                if original_value != new_value:
-                    user_fields_changed.append((field, f'{original_value} -> {new_value}'))
-
-        return len(user_fields_changed) > 0

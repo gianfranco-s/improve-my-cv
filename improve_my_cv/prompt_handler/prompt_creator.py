@@ -2,14 +2,15 @@ import json
 
 from dataclasses import dataclass
 
+from improve_my_cv.log_config import logger
 from improve_my_cv.prompt_handler.cv_fields_filter import filter_resume
-
 
 @dataclass
 class PromptCreator:
     job_description: str
     json_resume: dict
     filtered_json_resume: dict = None
+    apply_field_filters: bool = True
     prompt_template: str = "You are a robot that only outputs JSON objects. " \
         "Your role is an experienced recruiter, who improves a current resume with relevant words from a job description. " \
         "You'll be given two parameters and their values. " \
@@ -25,8 +26,15 @@ class PromptCreator:
         "`json_resume`\n{json_resume}\n" 
     
     def __post_init__(self):
-        self.filtered_json_resume = filter_resume(self.json_resume)
+        if self.apply_field_filters:
+            self.filtered_json_resume = filter_resume(self.json_resume)
+        else:
+            logger.warning("Please note that LLM may change")
+            logger.warning("- user's data, like name or address")
+            logger.warning("- static data, like dates or urls")
+            logger.warning("- JSON field names.")
 
     def create_prompt(self) -> str:
+        json_resume = self.filtered_json_resume if self.apply_field_filters else self.json_resume
         return self.prompt_template.format(job_description=self.job_description,
-                                           json_resume=json.dumps(self.filtered_json_resume, indent=4))
+                                           json_resume=json.dumps(json_resume, indent=4))
