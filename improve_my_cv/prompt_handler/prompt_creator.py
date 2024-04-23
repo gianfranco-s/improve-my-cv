@@ -1,5 +1,4 @@
 import json
-
 from dataclasses import dataclass
 
 from improve_my_cv.log_config import logger
