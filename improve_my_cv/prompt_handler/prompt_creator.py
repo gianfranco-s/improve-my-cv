@@ -2,8 +2,8 @@ import json
 
 from dataclasses import dataclass
 
+from improve_my_cv.log_config import logger
 from improve_my_cv.prompt_handler.cv_fields_filter import filter_resume
-
 
 @dataclass
 class PromptCreator:
@@ -28,6 +28,11 @@ class PromptCreator:
     def __post_init__(self):
         if self.apply_field_filters:
             self.filtered_json_resume = filter_resume(self.json_resume)
+        else:
+            logger.warning("Please note that LLM may change")
+            logger.warning("- user's data, like name or address")
+            logger.warning("- static data, like dates or urls")
+            logger.warning("- JSON field names.")
 
     def create_prompt(self) -> str:
         json_resume = self.filtered_json_resume if self.apply_field_filters else self.json_resume
